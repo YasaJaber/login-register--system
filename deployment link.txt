@@ -1,0 +1,6 @@
+rinder:
+https://login-register-system-cv0y.onrender.com
+
+
+railway:
+https://web-production-771d.up.railway.app/

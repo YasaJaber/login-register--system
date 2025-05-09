@@ -1,0 +1,136 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Register</title>
+  <link rel="stylesheet" href="css/modern.css" />
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" />
+</head>
+
+<body>
+  <!-- Animated Background Particles -->
+  <div class="bg-particles">
+    <div class="particle"></div>
+    <div class="particle"></div>
+    <div class="particle"></div>
+    <div class="particle"></div>
+    <div class="particle"></div>
+    <div class="particle"></div>
+  </div>
+  <div class="container page-transition">
+    <div class="form-container">
+      <h1>Create New Account</h1>
+      <p>Fill in your details to create your account</p>
+      <form id="registerForm">
+        <div class="form-group">
+          <label for="name">Full Name</label>
+          <input type="text" id="name" name="name" placeholder="Enter your full name" required />
+        </div>
+        <div class="form-group">
+          <label for="email">Email Address</label>
+          <input type="email" id="email" name="email" placeholder="Enter your email" required />
+        </div>
+        <div class="form-group">
+          <label for="password">Password</label>
+          <input type="password" id="password" name="password" placeholder="Create a password" required />
+        </div>
+        <div class="form-group">
+          <label for="confirmPassword">Confirm Password</label>
+          <input type="password" id="confirmPassword" name="confirmPassword" placeholder="Confirm your password"
+            required />
+        </div>
+        <div class="form-group">
+          <button type="submit" class="btn btn-primary">
+            <i class="fas fa-user-plus"></i> Create Account
+          </button>
+        </div>
+        <div class="links">
+          <a href="login.html"><i class="fas fa-sign-in-alt"></i> Already have an account?
+            Login</a>
+        </div>
+      </form>
+      <div id="message" class="message"></div>
+
+      <div class="social-login-container">
+        <div class="social-login-title">Or Register with</div>
+        <div class="social-buttons">
+          <button class="social-button" id="googleSignup">
+            <i class="fab fa-google"></i> Google
+          </button>
+          <button class="social-button" id="facebookSignup">
+            <i class="fab fa-facebook-f"></i> Facebook
+          </button>
+        </div>
+        
+      </div>
+    </div>
+  </div>
+  <script src="js/loader.js"></script>
+  <script src="js/background-effects.js"></script>
+  <!-- Register script with modules support -->
+  <script type="module">
+    // Import necessary functions from social auth redirects
+    import { handleGoogleAuth, handleFacebookAuth } from './js/social-auth-redirect.js';
+
+    // Make functions available globally
+    window.handleGoogleAuth = handleGoogleAuth;
+    window.handleFacebookAuth = handleFacebookAuth;
+
+    // Set event listeners when DOM is loaded
+    document.addEventListener('DOMContentLoaded', function () {
+      const googleSignupBtn = document.getElementById("googleSignup");
+      const facebookSignupBtn = document.getElementById("facebookSignup");
+
+      if (googleSignupBtn) {
+        googleSignupBtn.addEventListener("click", function (e) {
+          e.preventDefault();
+          console.log("Google signup button clicked");
+          handleGoogleAuth(false);
+        });
+      }
+
+      if (facebookSignupBtn) {
+        facebookSignupBtn.addEventListener("click", function (e) {
+          e.preventDefault();
+          console.log("Facebook signup button clicked");
+          handleFacebookAuth(false);
+        });
+      }
+    });
+  </script>
+  <script src="js/register.js" type="module"></script>
+  <script src="js/footer-loader.js"></script>
+  <script>
+    // Check for error parameters in URL
+    document.addEventListener('DOMContentLoaded', function () {
+      const urlParams = new URLSearchParams(window.location.search);
+      if (urlParams.has('error')) {
+        const errorType = urlParams.get('error');
+        const messageElement = document.getElementById('message');
+
+        if (messageElement) {
+          let errorMessage = 'An error occurred during authentication.';
+
+          // Handle specific error types
+          if (errorType === 'google_auth_failed') {
+            errorMessage = 'Google authentication failed. Please try again.';
+          } else if (errorType === 'facebook_auth_failed') {
+            errorMessage = 'Facebook authentication failed. Please try again.';
+          } else if (errorType === 'auth_failed') {
+            errorMessage = 'Authentication failed. Please try again.';
+          } else if (errorType === 'email_exists') {
+            errorMessage = 'This email is already registered. Please login instead.';
+          }
+
+          messageElement.textContent = errorMessage;
+          messageElement.className = 'message error';
+          messageElement.style.display = 'block';
+        }
+      }
+    });
+  </script>
+</body>
+
+</html>
