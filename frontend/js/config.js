@@ -20,7 +20,7 @@ const API_URL = (() => {
   const developmentAPI = "http://localhost:3001";
 
   // Production environment - using Render URL
-  const productionAPI = "https://login-register-system-cv0y.onrender.com";
+  const productionAPI = "https://login-register-system-sxto.onrender.com";
 
   return isDevelopment ? developmentAPI : productionAPI;
 })();

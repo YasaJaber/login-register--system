@@ -1,5 +1,5 @@
 rinder:
-https://login-register-system-cv0y.onrender.com
+https://login-register-system-sxto.onrender.com
 
 
 railway:
