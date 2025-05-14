@@ -2,7 +2,12 @@
 // This approach avoids popup issues by using redirects instead
 
 // Import OAuth configuration and API_URL
-import { GOOGLE_CLIENT_ID, FACEBOOK_APP_ID } from "./oauth-config.js";
+import {
+  GOOGLE_CLIENT_ID,
+  GOOGLE_REDIRECT_URI,
+  GOOGLE_SCOPE,
+  FACEBOOK_APP_ID,
+} from "./oauth-config.js";
 import { API_URL } from "./config.js";
 
 // Function to handle Google login/signup with redirect
