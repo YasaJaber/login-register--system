@@ -2,13 +2,7 @@
 // This approach avoids popup issues by using redirects instead
 
 // Import OAuth configuration and API_URL
-import {
-  GOOGLE_CLIENT_ID,
-  GOOGLE_REDIRECT_URI,
-  GOOGLE_SCOPE,
-  FACEBOOK_APP_ID,
-} from "./oauth-config.js";
-import { API_URL } from "./config.js";
+import { API_URL, OAUTH_CONFIG } from "./config.js";
 
 // Function to handle Google login/signup with redirect
 function handleGoogleAuth(isLogin = true) {
@@ -18,9 +12,9 @@ function handleGoogleAuth(isLogin = true) {
     localStorage.setItem("authMode", authMode);
     console.log("Google auth - Setting auth mode:", authMode);
 
-    // Use the fixed redirect URI from oauth-config.js instead of dynamic generation
-    const redirectUri = GOOGLE_REDIRECT_URI;
-    const scope = encodeURIComponent(GOOGLE_SCOPE);
+    // Use the fixed redirect URI from config.js instead of dynamic generation
+    const redirectUri = OAUTH_CONFIG.google.redirect_uri;
+    const scope = encodeURIComponent(OAUTH_CONFIG.google.scope);
     const responseType = "code";
     const accessType = "offline";
     const prompt = "select_account"; // Changed from 'consent' to 'select_account' to match backend
@@ -31,7 +25,9 @@ function handleGoogleAuth(isLogin = true) {
     console.log("Google auth - Using redirect URI:", redirectUri);
 
     // Create the complete OAuth URL
-    const googleAuthUrl = `https://accounts.google.com/o/oauth2/auth?client_id=${GOOGLE_CLIENT_ID}&redirect_uri=${encodeURIComponent(
+    const googleAuthUrl = `https://accounts.google.com/o/oauth2/auth?client_id=${
+      OAUTH_CONFIG.google.client_id
+    }&redirect_uri=${encodeURIComponent(
       redirectUri
     )}&scope=${scope}&response_type=${responseType}&access_type=${accessType}&prompt=${prompt}&state=${state}`;
 
@@ -57,24 +53,26 @@ function handleFacebookAuth(isLogin = true) {
   try {
     // Print debug information first
     console.log("Facebook login debug info:");
-    console.log("Facebook App ID:", FACEBOOK_APP_ID);
-    console.log("Redirect URI:", `${API_URL}/api/auth/facebook/callback`);
+    console.log("Facebook App ID:", OAUTH_CONFIG.facebook.app_id);
+    console.log("Redirect URI:", OAUTH_CONFIG.facebook.redirect_uri);
 
     // Store login mode in localStorage to remember after redirect
     const authMode = isLogin ? "login" : "register";
     localStorage.setItem("authMode", authMode);
     console.log("Facebook auth - Setting auth mode:", authMode);
 
-    // Use API_URL instead of window.location.origin to ensure consistency
-    const redirectUri = `${API_URL}/api/auth/facebook/callback`;
-    const scope = encodeURIComponent("email,public_profile");
+    // Use redirect_uri from config instead of constructing it
+    const redirectUri = OAUTH_CONFIG.facebook.redirect_uri;
+    const scope = encodeURIComponent(OAUTH_CONFIG.facebook.scope);
 
     // Add state parameter to indicate login or register mode
     const state = authMode; // Using authMode directly for clarity
     console.log("Facebook auth - Using state parameter:", state);
 
     // Create the complete OAuth URL
-    const facebookAuthUrl = `https://www.facebook.com/v15.0/dialog/oauth?client_id=${FACEBOOK_APP_ID}&redirect_uri=${encodeURIComponent(
+    const facebookAuthUrl = `https://www.facebook.com/v15.0/dialog/oauth?client_id=${
+      OAUTH_CONFIG.facebook.app_id
+    }&redirect_uri=${encodeURIComponent(
       redirectUri
     )}&scope=${scope}&response_type=code&state=${state}`;
 
@@ -204,6 +202,20 @@ function checkAuthStatus() {
     // Show detailed error message
     let errorMessage;
 
+    // Log the raw error for debugging
+    console.log("Raw authentication error:", error);
+    console.log("Decoded error:", decodeURIComponent(error));
+
+    // Check if error contains more details (sometimes returned as JSON string)
+    try {
+      if (error.startsWith("{") && error.endsWith("}")) {
+        const errorObj = JSON.parse(decodeURIComponent(error));
+        console.log("Parsed error object:", errorObj);
+      }
+    } catch (e) {
+      console.log("Error is not a JSON string");
+    }
+
     switch (error) {
       case "google_auth_failed":
         errorMessage = "Google authentication failed. Please try again.";
@@ -220,6 +232,10 @@ function checkAuthStatus() {
         break;
       case "account_not_found":
         errorMessage = "Account not found. Please register first.";
+        break;
+      case "bad_request":
+        errorMessage =
+          "Authentication failed: Bad request. Please check your configuration.";
         break;
       default:
         errorMessage = `Authentication failed: ${decodeURIComponent(error)}`;
