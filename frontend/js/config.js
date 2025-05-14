@@ -32,15 +32,17 @@ const OAUTH_CONFIG = {
   google: {
     client_id:
       "836260911585-4jlia4fhpn5bb66ufnb8sfuho1c5mv17.apps.googleusercontent.com",
-    // Dynamic redirect URI based on current environment
-    redirect_uri: `${API_URL}/api/auth/google/callback`,
+    // Fixed redirect URI that matches exactly what's registered in Google Cloud Console
+    // Important: This must match the exact URI registered in Google Developer Console
+    redirect_uri: "https://login-register-system-sxto.onrender.com/api/auth/google/callback",
     scope:
       "https://www.googleapis.com/auth/userinfo.profile https://www.googleapis.com/auth/userinfo.email",
   },
   facebook: {
     app_id: "702595068914731",
-    // Dynamic redirect URI based on current environment
-    redirect_uri: `${API_URL}/api/auth/facebook/callback`,
+    // Fixed redirect URI that matches exactly what's registered in Facebook Developer Portal
+    // Important: This must match the exact URI registered in Facebook Developer Portal
+    redirect_uri: "http://localhost:3001/api/auth/facebook/callback",
     scope: "email,public_profile",
   },
 };

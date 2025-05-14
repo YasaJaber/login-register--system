@@ -13,11 +13,9 @@ function handleGoogleAuth(isLogin = true) {
     localStorage.setItem("authMode", authMode);
     console.log("Google auth - Setting auth mode:", authMode);
 
-    // Use API_URL instead of window.location.origin to ensure consistency
-    const redirectUri = `${API_URL}/api/auth/google/callback`;
-    const scope = encodeURIComponent(
-      "https://www.googleapis.com/auth/userinfo.profile https://www.googleapis.com/auth/userinfo.email"
-    );
+    // Use the fixed redirect URI from oauth-config.js instead of dynamic generation
+    const redirectUri = GOOGLE_REDIRECT_URI;
+    const scope = encodeURIComponent(GOOGLE_SCOPE);
     const responseType = "code";
     const accessType = "offline";
     const prompt = "select_account"; // Changed from 'consent' to 'select_account' to match backend
@@ -25,6 +23,7 @@ function handleGoogleAuth(isLogin = true) {
     // Add state parameter to indicate login or register mode
     const state = authMode; // Using authMode directly for clarity
     console.log("Google auth - Using state parameter:", state);
+    console.log("Google auth - Using redirect URI:", redirectUri);
 
     // Create the complete OAuth URL
     const googleAuthUrl = `https://accounts.google.com/o/oauth2/auth?client_id=${GOOGLE_CLIENT_ID}&redirect_uri=${encodeURIComponent(
