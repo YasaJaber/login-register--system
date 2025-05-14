@@ -5,6 +5,7 @@ const User = require("../models/User");
 
 // Get the base URL for redirects (default to localhost in development)
 const BASE_URL = process.env.BASE_URL || "http://localhost:3001";
+console.log("Auth routes using BASE_URL:", BASE_URL);
 
 // Google Authentication Routes
 router.get(
@@ -18,6 +19,8 @@ router.get(
 // Google callback route
 router.get("/google/callback", (req, res, next) => {
   // Get the state parameter to determine if this was a register or login attempt
+  console.log("Google callback received with full query:", req.query);
+
   const isRegisterMode = req.query.state === "register";
   const targetPage = isRegisterMode ? "register.html" : "login.html";
 

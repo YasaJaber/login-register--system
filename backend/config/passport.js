@@ -6,6 +6,21 @@ const JWT = require("jsonwebtoken");
 
 // Get the base URL (default to localhost in development)
 const BASE_URL = process.env.BASE_URL || "http://localhost:3001";
+console.log("Passport config using BASE_URL:", BASE_URL);
+
+// Explicit callback URLs for production and development
+const GOOGLE_CALLBACK_URL =
+  process.env.NODE_ENV === "production"
+    ? "https://login-register-system-sxto.onrender.com/api/auth/google/callback"
+    : `${BASE_URL}/api/auth/google/callback`;
+
+const FACEBOOK_CALLBACK_URL =
+  process.env.NODE_ENV === "production"
+    ? "https://login-register-system-sxto.onrender.com/api/auth/facebook/callback"
+    : `${BASE_URL}/api/auth/facebook/callback`;
+
+console.log("Using Google callback URL:", GOOGLE_CALLBACK_URL);
+console.log("Using Facebook callback URL:", FACEBOOK_CALLBACK_URL);
 
 // Serialize user for the session
 passport.serializeUser((user, done) => {
@@ -41,7 +56,7 @@ passport.use(
       clientSecret:
         process.env.GOOGLE_CLIENT_SECRET ||
         "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",
-      callbackURL: `${BASE_URL}/api/auth/google/callback`,
+      callbackURL: GOOGLE_CALLBACK_URL,
       passReqToCallback: true,
     },
     async (req, accessToken, refreshToken, profile, done) => {
@@ -143,7 +158,7 @@ passport.use(
       clientID: process.env.FACEBOOK_APP_ID || "702595068914731",
       clientSecret:
         process.env.FACEBOOK_APP_SECRET || "d5505fd165eda4c9e904096295954ee7",
-      callbackURL: `${BASE_URL}/api/auth/facebook/callback`,
+      callbackURL: FACEBOOK_CALLBACK_URL,
       profileFields: ["id", "emails", "name", "displayName"],
       passReqToCallback: true,
     },

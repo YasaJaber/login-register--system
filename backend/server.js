@@ -25,6 +25,14 @@ const passport = require("./config/passport");
 // Load environment variables
 require("dotenv").config({ path: path.join(__dirname, "../.env") });
 
+// Define production base URL explicitly
+process.env.BASE_URL =
+  process.env.NODE_ENV === "production"
+    ? "https://login-register-system-sxto.onrender.com"
+    : process.env.BASE_URL || "http://localhost:3001";
+
+console.log("Using BASE_URL:", process.env.BASE_URL);
+
 // Internal Dependencies
 const connectDB = require("./config/db");
 const User = require("./models/User");
