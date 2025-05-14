@@ -10,12 +10,11 @@
  */
 
 // Dynamic API URL detection for development/production environments
-const API_URL = (() => {
-  // Environment detection based on hostname
-  const isDevelopment =
-    window.location.hostname === "localhost" ||
-    window.location.hostname === "127.0.0.1";
+const isDevelopment =
+  window.location.hostname === "localhost" ||
+  window.location.hostname === "127.0.0.1";
 
+const API_URL = (() => {
   // Development environment API URL
   const developmentAPI = "http://localhost:3001";
 

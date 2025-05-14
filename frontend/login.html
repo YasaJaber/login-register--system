@@ -142,32 +142,56 @@
   <script src="js/background-effects.js"></script>
   <!-- Login script with modules support -->
   <script type="module">
+    // For debugging - will show if module is loaded
+    console.log("Social auth module loading...");
+
     // Import necessary functions from social auth redirects
     import { handleGoogleAuth, handleFacebookAuth } from './js/social-auth-redirect.js';
+    import { OAUTH_CONFIG } from './js/config.js';
+    console.log("Social auth module imported successfully");
+    console.log("OAuth Config (Debug):", OAUTH_CONFIG);
 
     // Make functions available globally
     window.handleGoogleAuth = handleGoogleAuth;
     window.handleFacebookAuth = handleFacebookAuth;
+    console.log("Social auth functions assigned to window object");
 
     // Set event listeners when DOM is loaded
     document.addEventListener('DOMContentLoaded', function () {
+      console.log("DOM loaded, setting up social login buttons");
       const googleLoginBtn = document.getElementById("googleLogin");
       const facebookLoginBtn = document.getElementById("facebookLogin");
 
       if (googleLoginBtn) {
+        console.log("Google button found, attaching event");
         googleLoginBtn.addEventListener("click", function (e) {
           e.preventDefault();
           console.log("Google login button clicked");
-          handleGoogleAuth(true);
+          try {
+            handleGoogleAuth(true);
+          } catch (error) {
+            console.error("Error calling handleGoogleAuth:", error);
+            alert("An error occurred with Google login. Please check the console for details.");
+          }
         });
+      } else {
+        console.warn("Google login button not found");
       }
 
       if (facebookLoginBtn) {
+        console.log("Facebook button found, attaching event");
         facebookLoginBtn.addEventListener("click", function (e) {
           e.preventDefault();
           console.log("Facebook login button clicked");
-          handleFacebookAuth(true);
+          try {
+            handleFacebookAuth(true);
+          } catch (error) {
+            console.error("Error calling handleFacebookAuth:", error);
+            alert("An error occurred with Facebook login. Please check the console for details.");
+          }
         });
+      } else {
+        console.warn("Facebook login button not found");
       }
     });
   </script>

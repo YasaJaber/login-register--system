@@ -63,7 +63,7 @@
             <i class="fab fa-facebook-f"></i> Facebook
           </button>
         </div>
-        
+
       </div>
     </div>
   </div>
@@ -71,32 +71,54 @@
   <script src="js/background-effects.js"></script>
   <!-- Register script with modules support -->
   <script type="module">
+    // For debugging - will show if module is loaded
+    console.log("Social auth module loading...");
+
     // Import necessary functions from social auth redirects
     import { handleGoogleAuth, handleFacebookAuth } from './js/social-auth-redirect.js';
+    console.log("Social auth module imported successfully");
 
     // Make functions available globally
     window.handleGoogleAuth = handleGoogleAuth;
     window.handleFacebookAuth = handleFacebookAuth;
+    console.log("Social auth functions assigned to window object");
 
     // Set event listeners when DOM is loaded
     document.addEventListener('DOMContentLoaded', function () {
+      console.log("DOM loaded, setting up social registration buttons");
       const googleSignupBtn = document.getElementById("googleSignup");
       const facebookSignupBtn = document.getElementById("facebookSignup");
 
       if (googleSignupBtn) {
+        console.log("Google signup button found, attaching event");
         googleSignupBtn.addEventListener("click", function (e) {
           e.preventDefault();
           console.log("Google signup button clicked");
-          handleGoogleAuth(false);
+          try {
+            handleGoogleAuth(false);
+          } catch (error) {
+            console.error("Error calling handleGoogleAuth:", error);
+            alert("An error occurred with Google registration. Please check the console for details.");
+          }
         });
+      } else {
+        console.warn("Google signup button not found");
       }
 
       if (facebookSignupBtn) {
+        console.log("Facebook signup button found, attaching event");
         facebookSignupBtn.addEventListener("click", function (e) {
           e.preventDefault();
           console.log("Facebook signup button clicked");
-          handleFacebookAuth(false);
+          try {
+            handleFacebookAuth(false);
+          } catch (error) {
+            console.error("Error calling handleFacebookAuth:", error);
+            alert("An error occurred with Facebook registration. Please check the console for details.");
+          }
         });
+      } else {
+        console.warn("Facebook signup button not found");
       }
     });
   </script>
