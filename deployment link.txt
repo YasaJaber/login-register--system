@@ -1,6 +1,0 @@
-rinder:
-https://login-register-system-sxto.onrender.com
-
-
-railway:
-https://web-production-771d.up.railway.app/
