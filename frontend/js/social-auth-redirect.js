@@ -19,7 +19,7 @@ function handleGoogleAuth(isLogin = true) {
     const accessType = "offline";
     const prompt = "select_account"; // Changed from 'consent' to 'select_account' to match backend
 
-    // Add state parameter to indicate login or register mode
+    // Add state parameter to indicate login or register mode - make it simple
     const state = authMode; // Using authMode directly for clarity
     console.log("Google auth - Using state parameter:", state);
     console.log("Google auth - Using redirect URI:", redirectUri);
@@ -36,6 +36,15 @@ function handleGoogleAuth(isLogin = true) {
     // Show loading message to user
     showLoadingMessage("", "Connecting to Google...");
 
+    // Log everything to help debug
+    console.log("Full OAuth params:", {
+      client_id: OAUTH_CONFIG.google.client_id,
+      redirect_uri: redirectUri,
+      scope: scope,
+      state: state,
+      prompt: prompt,
+    });
+
     // Redirect the user to Google login
     setTimeout(() => {
       window.location.href = googleAuthUrl;
@@ -48,54 +57,51 @@ function handleGoogleAuth(isLogin = true) {
   }
 }
 
-// Function to handle Facebook login/signup with redirect
-function handleFacebookAuth(isLogin = true) {
+// Function to handle GitHub login/signup with redirect
+function handleGitHubAuth(isLogin = true) {
   try {
-    // Print debug information first
-    console.log("Facebook login debug info:");
-    console.log("Facebook App ID:", OAUTH_CONFIG.facebook.app_id);
-    console.log("Redirect URI:", OAUTH_CONFIG.facebook.redirect_uri);
-
     // Store login mode in localStorage to remember after redirect
     const authMode = isLogin ? "login" : "register";
     localStorage.setItem("authMode", authMode);
-    console.log("Facebook auth - Setting auth mode:", authMode);
+    console.log("GitHub auth - Setting auth mode:", authMode);
 
-    // Use redirect_uri from config instead of constructing it
-    const redirectUri = OAUTH_CONFIG.facebook.redirect_uri;
-    const scope = encodeURIComponent(OAUTH_CONFIG.facebook.scope);
+    // Use the fixed redirect URI from config.js
+    const redirectUri = OAUTH_CONFIG.github.redirect_uri;
+    const scope = encodeURIComponent(OAUTH_CONFIG.github.scope);
 
     // Add state parameter to indicate login or register mode
     const state = authMode; // Using authMode directly for clarity
-    console.log("Facebook auth - Using state parameter:", state);
+    console.log("GitHub auth - Using state parameter:", state);
+    console.log("GitHub auth - Using redirect URI:", redirectUri);
 
-    // Create the complete OAuth URL
-    const facebookAuthUrl = `https://www.facebook.com/v15.0/dialog/oauth?client_id=${
-      OAUTH_CONFIG.facebook.app_id
+    // Create the complete OAuth URL for GitHub
+    const githubAuthUrl = `https://github.com/login/oauth/authorize?client_id=${
+      OAUTH_CONFIG.github.client_id
     }&redirect_uri=${encodeURIComponent(
       redirectUri
-    )}&scope=${scope}&response_type=code&state=${state}`;
+    )}&scope=${scope}&state=${state}`;
 
-    console.log("Facebook Auth URL:", facebookAuthUrl); // Debug log
+    console.log("GitHub Auth URL:", githubAuthUrl); // Debug log
 
     // Show loading message to user
-    showLoadingMessage("", "Connecting to Facebook...");
+    showLoadingMessage("", "Connecting to GitHub...");
 
-    // Redirect the user to Facebook login
+    // Log everything to help debug
+    console.log("Full GitHub OAuth params:", {
+      client_id: OAUTH_CONFIG.github.client_id,
+      redirect_uri: redirectUri,
+      scope: scope,
+      state: state,
+    });
+
+    // Redirect the user to GitHub login
     setTimeout(() => {
-      try {
-        window.location.href = facebookAuthUrl;
-      } catch (redirectError) {
-        console.error("Error during redirect:", redirectError);
-        showErrorMessage(
-          "Failed to redirect to Facebook. Check console for details."
-        );
-      }
+      window.location.href = githubAuthUrl;
     }, 1000); // Small delay to show the message
   } catch (error) {
-    console.error("Error initiating Facebook auth:", error);
+    console.error("Error initiating GitHub auth:", error);
     showErrorMessage(
-      "Error connecting to Facebook authentication service. Please try again."
+      "Error connecting to GitHub authentication service. Please try again."
     );
   }
 }
@@ -220,8 +226,8 @@ function checkAuthStatus() {
       case "google_auth_failed":
         errorMessage = "Google authentication failed. Please try again.";
         break;
-      case "facebook_auth_failed":
-        errorMessage = "Facebook authentication failed. Please try again.";
+      case "github_auth_failed":
+        errorMessage = "GitHub authentication failed. Please try again.";
         break;
       case "auth_failed":
         errorMessage = "Authentication failed. Please try again.";
@@ -255,11 +261,11 @@ document.addEventListener("DOMContentLoaded", function () {
 
   // Login page buttons
   const googleLoginBtn = document.getElementById("googleLogin");
-  const facebookLoginBtn = document.getElementById("facebookLogin");
+  const githubLoginBtn = document.getElementById("githubLogin");
 
   // Register page buttons
   const googleSignupBtn = document.getElementById("googleSignup");
-  const facebookSignupBtn = document.getElementById("facebookSignup");
+  const githubSignupBtn = document.getElementById("githubSignup");
 
   // Add event listeners for login page
   if (googleLoginBtn) {
@@ -269,10 +275,10 @@ document.addEventListener("DOMContentLoaded", function () {
     });
   }
 
-  if (facebookLoginBtn) {
-    console.log("Facebook login button found");
-    facebookLoginBtn.addEventListener("click", function () {
-      handleFacebookAuth(true);
+  if (githubLoginBtn) {
+    console.log("GitHub login button found");
+    githubLoginBtn.addEventListener("click", function () {
+      handleGitHubAuth(true);
     });
   }
 
@@ -284,13 +290,13 @@ document.addEventListener("DOMContentLoaded", function () {
     });
   }
 
-  if (facebookSignupBtn) {
-    console.log("Facebook signup button found");
-    facebookSignupBtn.addEventListener("click", function () {
-      handleFacebookAuth(false);
+  if (githubSignupBtn) {
+    console.log("GitHub signup button found");
+    githubSignupBtn.addEventListener("click", function () {
+      handleGitHubAuth(false);
     });
   }
 });
 
 // Exporting functions for external use
-export { handleGoogleAuth, handleFacebookAuth, checkAuthStatus };
+export { handleGoogleAuth, handleGitHubAuth, checkAuthStatus };

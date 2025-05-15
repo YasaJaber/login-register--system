@@ -58,29 +58,31 @@ router.get("/google/callback", (req, res, next) => {
   })(req, res, next);
 });
 
-// Facebook Authentication Routes
+// GitHub Authentication Routes
 router.get(
-  "/facebook",
-  passport.authenticate("facebook", {
-    scope: ["email", "public_profile"],
+  "/github",
+  passport.authenticate("github", {
+    scope: ["user:email"],
   })
 );
 
-// Facebook callback route
-router.get("/facebook/callback", (req, res, next) => {
+// GitHub callback route
+router.get("/github/callback", (req, res, next) => {
   // Get the state parameter to determine if this was a register or login attempt
+  console.log("GitHub callback received with full query:", req.query);
+
   const isRegisterMode = req.query.state === "register";
   const targetPage = isRegisterMode ? "register.html" : "login.html";
 
-  console.log("Facebook callback - Request state:", req.query.state);
-  console.log("Facebook callback - Register mode:", isRegisterMode);
-  console.log("Facebook callback - Target page:", targetPage);
+  console.log("GitHub callback - Request state:", req.query.state);
+  console.log("GitHub callback - Register mode:", isRegisterMode);
+  console.log("GitHub callback - Target page:", targetPage);
 
   // Create custom authentication handler
-  passport.authenticate("facebook", { session: false }, (err, user, info) => {
+  passport.authenticate("github", { session: false }, (err, user, info) => {
     // Handle error
     if (err) {
-      console.error("Facebook auth error:", err);
+      console.error("GitHub auth error:", err);
       return res.redirect(
         `${BASE_URL}/${targetPage}?error=${encodeURIComponent(err.message)}`
       );
@@ -91,18 +93,18 @@ router.get("/facebook/callback", (req, res, next) => {
       const errorMsg =
         info && info.message ? info.message : "authentication_failed";
       console.log(
-        `Facebook auth failed with message: ${errorMsg}, redirecting to ${targetPage}`
+        `GitHub auth failed with message: ${errorMsg}, redirecting to ${targetPage}`
       );
       return res.redirect(
         `${BASE_URL}/${targetPage}?error=${encodeURIComponent(errorMsg)}`
       );
     }
 
-    console.log("Facebook auth successful - user:", user.email);
+    console.log("GitHub auth successful - user:", user.email);
 
     // Authentication successful
     req.user = user;
-    handleSuccessfulAuth(req, res, "facebook");
+    handleSuccessfulAuth(req, res, "github");
   })(req, res, next);
 });
 

@@ -54,10 +54,13 @@
       <div id="message" class="message"></div>
 
       <div class="social-login-container">
-        <div class="social-login-title">Or Register with Google</div>
+        <div class="social-login-title">Or Register with</div>
         <div class="social-buttons">
           <button class="social-button" id="googleSignup">
             <i class="fab fa-google"></i> Google
+          </button>
+          <button class="social-button" id="githubSignup">
+            <i class="fab fa-github"></i> GitHub
           </button>
         </div>
       </div>
@@ -71,19 +74,19 @@
     console.log("Social auth module loading...");
 
     // Import necessary functions from social auth redirects
-    import { handleGoogleAuth, handleFacebookAuth } from './js/social-auth-redirect.js';
+    import { handleGoogleAuth, handleGitHubAuth } from './js/social-auth-redirect.js';
     console.log("Social auth module imported successfully");
 
     // Make functions available globally
     window.handleGoogleAuth = handleGoogleAuth;
-    window.handleFacebookAuth = handleFacebookAuth;
+    window.handleGitHubAuth = handleGitHubAuth;
     console.log("Social auth functions assigned to window object");
 
     // Set event listeners when DOM is loaded
     document.addEventListener('DOMContentLoaded', function () {
       console.log("DOM loaded, setting up social registration buttons");
       const googleSignupBtn = document.getElementById("googleSignup");
-      const facebookSignupBtn = document.getElementById("facebookSignup");
+      const githubSignupBtn = document.getElementById("githubSignup");
 
       if (googleSignupBtn) {
         console.log("Google signup button found, attaching event");
@@ -101,20 +104,20 @@
         console.warn("Google signup button not found");
       }
 
-      if (facebookSignupBtn) {
-        console.log("Facebook signup button found, attaching event");
-        facebookSignupBtn.addEventListener("click", function (e) {
+      if (githubSignupBtn) {
+        console.log("GitHub signup button found, attaching event");
+        githubSignupBtn.addEventListener("click", function (e) {
           e.preventDefault();
-          console.log("Facebook signup button clicked");
+          console.log("GitHub signup button clicked");
           try {
-            handleFacebookAuth(false);
+            handleGitHubAuth(false);
           } catch (error) {
-            console.error("Error calling handleFacebookAuth:", error);
-            alert("An error occurred with Facebook registration. Please check the console for details.");
+            console.error("Error calling handleGitHubAuth:", error);
+            alert("An error occurred with GitHub registration. Please check the console for details.");
           }
         });
       } else {
-        console.warn("Facebook signup button not found");
+        console.warn("GitHub signup button not found");
       }
     });
   </script>
@@ -134,8 +137,8 @@
           // Handle specific error types
           if (errorType === 'google_auth_failed') {
             errorMessage = 'Google authentication failed. Please try again.';
-          } else if (errorType === 'facebook_auth_failed') {
-            errorMessage = 'Facebook authentication failed. Please try again.';
+          } else if (errorType === 'github_auth_failed') {
+            errorMessage = 'GitHub authentication failed. Please try again.';
           } else if (errorType === 'auth_failed') {
             errorMessage = 'Authentication failed. Please try again.';
           } else if (errorType === 'email_exists') {

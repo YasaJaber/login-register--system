@@ -14,6 +14,8 @@ const isDevelopment =
   window.location.hostname === "localhost" ||
   window.location.hostname === "127.0.0.1";
 
+console.log("Environment detection: isDevelopment =", isDevelopment);
+
 const API_URL = (() => {
   // Development environment API URL
   const developmentAPI = "http://localhost:3001";
@@ -26,31 +28,30 @@ const API_URL = (() => {
 
 // OAuth Configuration - Social Media Authentication
 // Social authentication configurations
-// Using the actual client IDs from your Google and Facebook developer accounts
 const OAUTH_CONFIG = {
   google: {
     client_id:
       "836260911585-4jlia4fhpn5bb66ufnb8sfuho1c5mv17.apps.googleusercontent.com",
-    // Fixed redirect URI that matches exactly what's registered in Google Cloud Console
-    // Important: This must match the exact URI registered in Google Developer Console
-    // Using dynamic redirect URI based on environment
-    redirect_uri: isDevelopment
-      ? "http://localhost:3001/api/auth/google/callback"
-      : "https://login-register-system-sxto.onrender.com/api/auth/google/callback",
+    // Fixed redirect URI for both environments
+    // IMPORTANT: This MUST match exactly what's registered in Google Cloud Console
+    redirect_uri:
+      "https://login-register-system-sxto.onrender.com/api/auth/google/callback",
     scope:
       "https://www.googleapis.com/auth/userinfo.profile https://www.googleapis.com/auth/userinfo.email",
   },
-  facebook: {
-    app_id: "702595068914731",
-    // Fixed redirect URI that matches exactly what's registered in Facebook Developer Portal
-    // Important: This must match the exact URI registered in Facebook Developer Portal
-    // Using dynamic redirect URI based on environment
-    redirect_uri: isDevelopment
-      ? "http://localhost:3001/api/auth/facebook/callback"
-      : "https://login-register-system-sxto.onrender.com/api/auth/facebook/callback",
-    scope: "email,public_profile",
+  github: {
+    client_id: "Ov23li1D4fK0s7GerHnh",
+    // Fixed redirect URI for both environments - must match GitHub OAuth App settings
+    redirect_uri:
+      "https://login-register-system-sxto.onrender.com/api/auth/github/callback",
+    scope: "user:email",
   },
 };
+
+console.log("OAuth config:", {
+  "Google redirect URI": OAUTH_CONFIG.google.redirect_uri,
+  "GitHub redirect URI": OAUTH_CONFIG.github.redirect_uri,
+});
 
 // ==========================================
 // APPLICATION SETTINGS

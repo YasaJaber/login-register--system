@@ -1,6 +1,6 @@
 const passport = require("passport");
 const GoogleStrategy = require("passport-google-oauth20").Strategy;
-const FacebookStrategy = require("passport-facebook").Strategy;
+const GitHubStrategy = require("passport-github2").Strategy;
 const User = require("../models/User");
 const JWT = require("jsonwebtoken");
 
@@ -14,13 +14,13 @@ const GOOGLE_CALLBACK_URL =
     ? "https://login-register-system-sxto.onrender.com/api/auth/google/callback"
     : `${BASE_URL}/api/auth/google/callback`;
 
-const FACEBOOK_CALLBACK_URL =
+const GITHUB_CALLBACK_URL =
   process.env.NODE_ENV === "production"
-    ? "https://login-register-system-sxto.onrender.com/api/auth/facebook/callback"
-    : `${BASE_URL}/api/auth/facebook/callback`;
+    ? "https://login-register-system-sxto.onrender.com/api/auth/github/callback"
+    : `${BASE_URL}/api/auth/github/callback`;
 
 console.log("Using Google callback URL:", GOOGLE_CALLBACK_URL);
-console.log("Using Facebook callback URL:", FACEBOOK_CALLBACK_URL);
+console.log("Using GitHub callback URL:", GITHUB_CALLBACK_URL);
 
 // Serialize user for the session
 passport.serializeUser((user, done) => {
@@ -151,57 +151,58 @@ passport.use(
   )
 );
 
-// Facebook OAuth Strategy
+// GitHub OAuth Strategy
 passport.use(
-  new FacebookStrategy(
+  new GitHubStrategy(
     {
-      clientID: process.env.FACEBOOK_APP_ID || "702595068914731",
+      clientID: process.env.GITHUB_CLIENT_ID || "Ov23li1D4fK0s7GerHnh",
       clientSecret:
-        process.env.FACEBOOK_APP_SECRET || "d5505fd165eda4c9e904096295954ee7",
-      callbackURL: FACEBOOK_CALLBACK_URL,
-      profileFields: ["id", "emails", "name", "displayName"],
+        process.env.GITHUB_CLIENT_SECRET ||
+        "37d94e4b8a53374e89a28f10cf3f9d3c9c27a2f4",
+      callbackURL: GITHUB_CALLBACK_URL,
+      scope: ["user:email"],
       passReqToCallback: true,
     },
     async (req, accessToken, refreshToken, profile, done) => {
       try {
         // Extract profile data
-        console.log("Facebook profile data:", profile);
+        console.log("GitHub profile data:", profile);
 
-        // Debug the request info to see what we're getting
-        console.log("Facebook auth - Request state:", req.query.state);
-        console.log("Facebook auth - Request path:", req.path);
-        console.log("Facebook auth - Request referer:", req.get("Referer"));
+        // Get primary email from GitHub
+        const emails = profile.emails || [];
+        const primaryEmail = emails.find((email) => email.primary) || emails[0];
+        const email = primaryEmail ? primaryEmail.value : null;
 
-        const email =
-          profile.emails && profile.emails[0]
-            ? profile.emails[0].value
-            : `fb_${profile.id}@placeholder.com`;
+        if (!email) {
+          return done(
+            new Error(
+              "GitHub authentication failed: No email provided. Make sure your email is public on GitHub."
+            ),
+            null
+          );
+        }
 
-        console.log("Facebook auth - User email:", email);
+        console.log("GitHub auth - User email:", email);
 
         // Check if we're in register mode or login mode
-        // This comes from the custom state parameter or the URI
         const isRegisterMode =
           req.query.state === "register" ||
           req.path.includes("register") ||
           req.get("Referer")?.includes("register");
         console.log(
-          "Facebook auth - Mode detected:",
+          "GitHub auth - Mode detected:",
           isRegisterMode ? "Register" : "Login"
         );
 
-        // Check if user exists - using both email and socialId checks
+        // Check if user exists
         let user = await User.findOne({
-          $or: [
-            { email: email },
-            { socialId: profile.id, provider: "facebook" },
-          ],
+          $or: [{ email: email }, { socialId: profile.id, provider: "github" }],
         });
 
-        console.log("Facebook auth - User exists:", !!user);
+        console.log("GitHub auth - User exists:", !!user);
         if (user) {
           console.log(
-            "Facebook auth - Existing user:",
+            "GitHub auth - Existing user:",
             user.email,
             user.provider
           );
@@ -214,7 +215,7 @@ passport.use(
           // User exists - check if they're trying to register
           if (isRegisterMode) {
             console.log(
-              "VALIDATION ERROR: User already exists but trying to register with Facebook"
+              "VALIDATION ERROR: User already exists but trying to register with GitHub"
             );
             return done(null, false, {
               message:
@@ -224,14 +225,14 @@ passport.use(
 
           // User exists and is trying to login - update their details
           user.socialId = profile.id;
-          user.provider = "facebook";
+          user.provider = "github";
           user.lastLogin = new Date();
-          console.log("Existing user logging in with Facebook:", user.email);
+          console.log("Existing user logging in with GitHub:", user.email);
         } else {
           // User doesn't exist - check if they're trying to login
           if (!isRegisterMode) {
             console.log(
-              "VALIDATION ERROR: User doesn't exist but trying to login with Facebook"
+              "VALIDATION ERROR: User doesn't exist but trying to login with GitHub"
             );
             return done(null, false, {
               message: "Account not found. Please register first.",
@@ -241,18 +242,18 @@ passport.use(
           // User doesn't exist and is trying to register - create new account
           isNewUser = true;
           user = new User({
-            name: profile.displayName || "Facebook User",
+            name: profile.displayName || profile.username || "GitHub User",
             email: email,
-            password: `facebook-${Math.random().toString(36).substring(2, 12)}`, // Random password
+            password: `github-${Math.random().toString(36).substring(2, 12)}`, // Random password
             socialId: profile.id,
-            provider: "facebook",
+            provider: "github",
             recoveryCode: Math.floor(
               100000 + Math.random() * 900000
             ).toString(),
             createdAt: new Date(),
             lastLogin: new Date(),
           });
-          console.log("New user created from Facebook auth:", email);
+          console.log("New user created from GitHub auth:", email);
         }
 
         // Save user
@@ -267,7 +268,7 @@ passport.use(
 
         return done(null, user);
       } catch (error) {
-        console.error("Error in Facebook authentication strategy:", error);
+        console.error("Error in GitHub authentication strategy:", error);
         return done(error, null);
       }
     }
