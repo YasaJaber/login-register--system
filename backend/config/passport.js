@@ -158,7 +158,7 @@ passport.use(
       clientID: process.env.GITHUB_CLIENT_ID || "Ov23li1D4fK0s7GerHnh",
       clientSecret:
         process.env.GITHUB_CLIENT_SECRET ||
-        "37d94e4b8a53374e89a28f10cf3f9d3c9c27a2f4",
+        "244b173b16142e89998d4fdd12f96c9663c62cc8",
       callbackURL: GITHUB_CALLBACK_URL,
       scope: ["user:email"],
       passReqToCallback: true,
