@@ -389,6 +389,8 @@ code:hover {
 @media (max-width: 768px) {
     .form-container {
         padding: 30px 20px;
+        max-width: 90%;
+        margin: 20px auto;
     }
 
     h1 {
@@ -402,6 +404,157 @@ code:hover {
 
     .buttons .btn {
         width: 100%;
+    }
+
+    body {
+        padding: 30px 15px;
+        height: auto;
+        min-height: 100vh;
+    }
+
+    .container {
+        padding-bottom: 60px;
+    }
+}
+
+/* Enhanced mobile styles */
+@media (max-width: 480px) {
+    body {
+        height: auto;
+        padding: 20px 10px;
+        overflow-y: auto;
+    }
+
+    .container {
+        min-height: auto;
+        padding-top: 20px;
+        padding-bottom: 80px;
+    }
+
+    .form-container {
+        padding: 25px 15px;
+        max-width: 100%;
+        margin: 10px auto;
+        transform: none !important;
+    }
+
+    .form-group {
+        margin-bottom: 25px;
+    }
+
+    input {
+        padding: 16px;
+        font-size: 16px;
+        margin-top: 5px;
+    }
+
+    h1 {
+        font-size: 22px;
+        margin-bottom: 20px;
+    }
+
+    p {
+        font-size: 14px;
+        margin-bottom: 25px;
+    }
+
+    .btn {
+        padding: 16px 20px;
+        font-size: 16px;
+    }
+
+    .social-buttons {
+        flex-direction: column;
+        align-items: center;
+        gap: 18px;
+    }
+
+    .social-button {
+        width: 100%;
+        max-width: 240px;
+        padding: 14px 15px;
+        margin-bottom: 8px;
+        font-size: 16px;
+    }
+
+    .links {
+        margin-top: 25px;
+        display: flex;
+        flex-direction: column;
+        gap: 20px;
+    }
+
+    .links a {
+        margin: 8px 0;
+        font-size: 16px;
+        padding: 5px 0;
+    }
+
+    .social-login-container {
+        margin-top: 30px;
+    }
+
+    .social-login-title {
+        margin-bottom: 20px;
+        font-size: 16px;
+    }
+
+    .footer {
+        padding: 12px;
+    }
+
+    .footer p {
+        font-size: 13px;
+    }
+
+    .message {
+        padding: 15px;
+        margin-top: 20px;
+        margin-bottom: 20px;
+        font-size: 15px;
+    }
+
+    label {
+        font-size: 16px;
+        margin-bottom: 10px;
+    }
+
+    .remember-me {
+        margin-bottom: 25px;
+    }
+
+    .remember-me label {
+        font-size: 15px;
+    }
+}
+
+/* Fix for mobile zoom */
+@media screen and (max-width: 480px) {
+
+    input,
+    select,
+    textarea {
+        font-size: 16px !important;
+        /* Prevents iOS zoom on focus */
+    }
+}
+
+/* Ensure scrolling works properly on mobile */
+html,
+body {
+    -webkit-overflow-scrolling: touch;
+    overflow-x: hidden;
+}
+
+/* Buttons container for mobile */
+@media (max-width: 480px) {
+    .buttons-container {
+        flex-direction: column;
+        gap: 15px;
+    }
+
+    .remember-me {
+        margin-bottom: 20px;
     }
 }
 

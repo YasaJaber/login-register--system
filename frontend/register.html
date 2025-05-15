@@ -5,8 +5,80 @@
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   <title>Register</title>
-  <link rel="stylesheet" href="css/modern.css" />
+  <link rel="stylesheet" href="css/modern.css?v=1.1" />
   <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" />
+  <style>
+    /* Custom Footer Styles */
+    .footer {
+      position: fixed;
+      bottom: 0;
+      left: 0;
+      width: 100%;
+      padding: 15px 20px;
+      background-color: rgba(255, 255, 255, 0.1);
+      backdrop-filter: blur(10px);
+      -webkit-backdrop-filter: blur(10px);
+      text-align: center;
+      z-index: 100;
+      border-top: 1px solid rgba(255, 255, 255, 0.2);
+    }
+
+    .footer p {
+      margin: 0;
+      font-size: 14px;
+      color: white;
+      text-shadow: 0 1px 3px rgba(0, 0, 0, 0.2);
+    }
+
+    .developer-name {
+      position: relative;
+      display: inline-block;
+      font-weight: 600;
+      background: linear-gradient(45deg, #4361ee, #f72585, #4cc9f0);
+      background-size: 200% 200%;
+      animation: gradientNameAnimation 7s ease infinite;
+      -webkit-background-clip: text;
+      background-clip: text;
+      color: transparent;
+      padding: 0 5px;
+      margin: 0 5px;
+      transition: all 0.3s ease;
+    }
+
+    .developer-name:before {
+      content: '';
+      position: absolute;
+      bottom: -2px;
+      left: 0;
+      width: 0;
+      height: 2px;
+      background: linear-gradient(45deg, #4361ee, #f72585, #4cc9f0);
+      transition: width 0.4s ease;
+    }
+
+    .developer-name:hover:before {
+      width: 100%;
+    }
+
+    .developer-name:hover {
+      transform: translateY(-2px);
+      text-shadow: 0 5px 15px rgba(76, 201, 240, 0.4);
+    }
+
+    @keyframes gradientNameAnimation {
+      0% {
+        background-position: 0% 50%;
+      }
+
+      50% {
+        background-position: 100% 50%;
+      }
+
+      100% {
+        background-position: 0% 50%;
+      }
+    }
+  </style>
 </head>
 
 <body>
@@ -51,7 +123,8 @@
             Login</a>
         </div>
       </form>
-      <div id="message" class="message"></div>
+      <div id="message" class="message"
+        style="min-height: 80px; background: transparent; border: none; box-shadow: none;"></div>
 
       <div class="social-login-container">
         <div class="social-login-title">Or Register with</div>

@@ -13,7 +13,7 @@ const mongoose = require("mongoose");
  * @property {string} password - Hashed user password
  * @property {string} recoveryCode - Code for account recovery
  * @property {Date} createdAt - Account creation timestamp
- * @property {string} provider - Authentication provider (local, google, facebook)
+ * @property {string} provider - Authentication provider (local, google, github)
  * @property {string} socialId - ID from social authentication provider
  * @property {Date} lastLogin - Last login timestamp
  */
