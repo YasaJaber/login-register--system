@@ -39,6 +39,7 @@ const User = require("./models/User");
 
 // Import routes
 const authRoutes = require("./routes/auth");
+const verifyPasswordRoutes = require("./routes/verify-password");
 
 // Initialize Express Application
 const app = express();
@@ -121,6 +122,7 @@ app.use(passport.session());
 
 // Routes
 app.use("/api/auth", authRoutes); // Use auth routes
+app.use("/api/verify-password", verifyPasswordRoutes); // Use verify password routes
 
 // Serve static frontend files
 app.use(express.static(path.join(__dirname, "../frontend")));

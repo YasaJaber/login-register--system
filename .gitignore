@@ -1,29 +1,44 @@
-# Dependencies
+# Dependencies 
 node_modules/
 npm-debug.log
 yarn-error.log
 yarn-debug.log
 .pnpm-debug.log
+package-lock.json
+yarn.lock
+pnpm-lock.yaml
 
-# Environment
+# Environment 
 .env
+.env.*
 .env.local
 .env.development.local
 .env.test.local
 .env.production.local
 
+# OAuth and API Keys 
+**/oauth-keys.json
+**/api-keys.json
+**/credentials.json
+**/config/secrets.js
+**/config/keys.js
+
 # Build files
 /build
 /dist
 /out
+/.next
+/.nuxt
 
 # Cache and logs
 .cache/
 .npm/
 logs
 *.log
+coverage/
+.nyc_output/
 
-# Editor directories and files
+# Editor directories and files 
 .idea/
 .vscode/
 *.suo
@@ -31,7 +46,22 @@ logs
 *.njsproj
 *.sln
 *.sw?
+.project
+.classpath
 
-# OS files
+# OS files 
 .DS_Store
-Thumbs.db 
+Thumbs.db
+desktop.ini
+
+# Backup files 
+*.bak
+*.backup
+*.swp
+*~
+
+# Local configuration 
+.prettierrc
+.eslintrc.local.js
+.stylelintrc.local.js
+.huskyrc.local.js

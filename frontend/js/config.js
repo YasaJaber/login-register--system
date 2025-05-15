@@ -48,6 +48,7 @@ const OAUTH_CONFIG = {
   },
 };
 
+
 console.log("OAuth config:", {
   "Google redirect URI": OAUTH_CONFIG.google.redirect_uri,
   "GitHub redirect URI": OAUTH_CONFIG.github.redirect_uri,
