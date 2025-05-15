@@ -46,7 +46,7 @@ const UserSchema = new mongoose.Schema({
   },
   provider: {
     type: String,
-    enum: ["local", "google", "facebook"],
+    enum: ["local", "google", "facebook", "github"],
     default: "local",
   },
   socialId: {
