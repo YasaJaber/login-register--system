@@ -1089,3 +1089,35 @@ p {
         transform: scale(1);
     }
 }
+
+/* Password field styles */
+.password-field {
+    position: relative;
+    width: 100%;
+}
+
+.password-field input {
+    width: 100%;
+    padding-right: 40px;
+}
+
+.password-toggle {
+    position: absolute;
+    right: 10px;
+    top: 50%;
+    transform: translateY(-50%);
+    cursor: pointer;
+    color: #a0a0a0;
+    transition: color 0.3s ease;
+    z-index: 10;
+}
+
+.password-toggle:hover {
+    color: #4cc9f0;
+}
+
+/* Prevent eye icon from being clickable when disabled */
+input:disabled+.password-toggle {
+    pointer-events: none;
+    opacity: 0.5;
+}
