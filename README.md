@@ -3,14 +3,20 @@
 A comprehensive user management system that supports two authentication methods:
 
 1. Email and password authentication
-2. Social authentication via Google and Facebook
+2. Social authentication via Google and GitHub
+
+## Live Preview
+
+Check out the live demo of the application:
+
+👉 [Login/Register System Live Demo](https://login-register-system-sxto.onrender.com/)
 
 ## Features
 
 ### User Authentication
 
 - **Traditional Authentication**: Secure email and password login with validation and password encryption
-- **Social Authentication**: Quick and easy login via Google and Facebook OAuth 2.0
+- **Social Authentication**: Quick and easy login via Google and GitHub OAuth 2.0
 - **Multiple Registration Options**: Register via email or through social accounts with automatic profile creation
 - **Session Management**: Secure JWT-based authentication tokens with configurable expiration
 
@@ -35,7 +41,7 @@ A comprehensive user management system that supports two authentication methods:
 - **MongoDB Integration**: Efficient NoSQL database storage with Mongoose ODM
 - **Responsive Design**: Mobile-first approach ensures compatibility across all devices
 - **Error Handling**: Comprehensive error handling with informative user feedback
-- **OAuth Integration**: Seamless integration with Google and Facebook authentication services
+- **OAuth Integration**: Seamless integration with Google and GitHub authentication services
 
 ### Developer Features
 

@@ -88,11 +88,10 @@ app.use(hpp());
 app.use(
   cors({
     origin: function (origin, callback) {
-      // السماح بالطلبات من أي مصدر (مفيد في التطوير)
       callback(null, true);
     },
     methods: ["GET", "POST", "PUT", "DELETE", "OPTIONS"],
-    credentials: true, // مهم جداً لـ OAuth
+    credentials: true,
     allowedHeaders: [
       "Content-Type",
       "Authorization",
@@ -511,6 +510,7 @@ app.post(
  * @route   POST /api/verify-recovery-code
  * @desc    Verify recovery code for password reset
  * @access  Public
+ * @note    This endpoint is now optional, users can go directly to reset-password
  */
 app.post(
   "/api/verify-recovery-code",
@@ -577,17 +577,11 @@ app.post(
         });
       }
 
-      // If we reach here, the code is valid
-      // Set a temporary session token with short expiry for password reset
-      const resetToken = jwt.sign(
-        { id: user._id, resetAttempt: true },
-        JWT_SECRET,
-        { expiresIn: "10m" } // Short expiry for security
-      );
-
+      // If we reach here, the code is valid - just return success
       res.json({
-        message: "Recovery code verified successfully",
-        resetToken, // This will be required for the actual password reset
+        message:
+          "Recovery code verified successfully. You can now set a new password",
+        verified: true, // No token needed anymore
       });
     } catch (error) {
       console.error("Error verifying recovery code:", error);
@@ -598,27 +592,33 @@ app.post(
 
 /**
  * @route   POST /api/reset-password
- * @desc    Reset password using verified recovery code and reset token
+ * @desc    Reset password using recovery code directly
  * @access  Public
  */
 app.post(
   "/api/reset-password",
   [
     // Input validation
-    check("resetToken").notEmpty().withMessage("Reset token is required"),
+    check("email")
+      .trim()
+      .notEmpty()
+      .withMessage("Email is required")
+      .isEmail()
+      .withMessage("Invalid email format")
+      .normalizeEmail(),
+    check("recoveryCode")
+      .trim()
+      .notEmpty()
+      .withMessage("Recovery code is required")
+      .isLength({ min: 6, max: 6 })
+      .withMessage("Recovery code must be 6 digits")
+      .isNumeric()
+      .withMessage("Recovery code must contain only numbers"),
     check("newPassword")
       .notEmpty()
       .withMessage("New password is required")
-      .isLength({ min: 8 })
-      .withMessage("Password must be at least 8 characters long")
-      .matches(/[a-z]/)
-      .withMessage("Password must contain at least one lowercase letter")
-      .matches(/[A-Z]/)
-      .withMessage("Password must contain at least one uppercase letter")
-      .matches(/[0-9]/)
-      .withMessage("Password must contain at least one number")
-      .matches(/[!@#$%^&*]/)
-      .withMessage("Password must contain at least one special character"),
+      .isLength({ min: 6 })
+      .withMessage("Password must be at least 6 characters long"),
   ],
   rateLimit({
     windowMs: 60 * 60 * 1000, // 1 hour
@@ -639,37 +639,28 @@ app.post(
         });
       }
 
-      const { resetToken, newPassword } = req.body;
+      const { email, recoveryCode, newPassword } = req.body;
 
-      // Verify reset token
-      let decoded;
-      try {
-        decoded = jwt.verify(resetToken, JWT_SECRET);
+      // Find user by email
+      const user = await User.findOne({ email: email.toLowerCase().trim() });
 
-        // Verify this is a reset attempt token
-        if (!decoded.resetAttempt) {
-          return res.status(400).json({
-            message: "Invalid reset token",
-            errorType: "invalid_token",
-          });
-        }
-      } catch (err) {
-        return res.status(400).json({
-          message: "Invalid or expired reset token",
-          errorType: "invalid_token",
-        });
-      }
-
-      // Find user by ID from token
-      const user = await User.findById(decoded.id);
+      // Security best practice: Use consistent error messages
       if (!user) {
         return res.status(400).json({
-          message: "User not found",
-          errorType: "user_not_found",
+          message: "Invalid verification details",
+          errorType: "verification_failed",
         });
       }
 
-      // Secure password hashing with higher work factor for reset passwords
+      // Verify recovery code with secure time-constant comparison
+      if (!user.recoveryCode || !safeCompare(user.recoveryCode, recoveryCode)) {
+        return res.status(400).json({
+          message: "Invalid recovery code",
+          errorType: "verification_failed",
+        });
+      }
+
+      // Hash the new password
       const hashedPassword = await bcrypt.hash(newPassword, 12); // Higher work factor
 
       // Update user's password
@@ -683,12 +674,8 @@ app.post(
       // Save updated user
       await user.save();
 
-      // Invalidate all existing sessions by changing JWT_SECRET (in a real app)
-      // This would be done via a separate mechanism, e.g., using a user-specific JWT secret version
-
       res.json({
         message: "Password has been reset successfully",
-        // Don't send recovery code in response for better security
       });
     } catch (error) {
       console.error("Error in password reset:", error);
