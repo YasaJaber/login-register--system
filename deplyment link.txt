@@ -1,2 +1,0 @@
-render:
-https://login-register-system-sxto.onrender.com/
